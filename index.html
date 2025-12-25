@@ -2,102 +2,340 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>YAZEED — Player Card</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
+    :root{
+      --bg:#070a0f;
+      --panel:#0b1220;
+      --border:#243044;
+      --text:#eaf2ff;
+      --muted:#a9c0df;
+      --blue:#2ea8ff;
+      --blue2:#1e90ff;
+      --shadow: rgba(0,0,0,.45);
+    }
+
+    *{ box-sizing: border-box; }
     body{
       margin:0;
-      background:#070a0f;
-      color:#eaf2ff;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      padding:24px;
+      background: radial-gradient(1200px 600px at 50% -10%, rgba(46,168,255,.18), transparent 60%),
+                  radial-gradient(900px 400px at 10% 20%, rgba(46,168,255,.08), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      font-family: "Press Start 2P", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      padding: 24px;
     }
+
+    .wrap{ max-width: 980px; margin: 0 auto; }
+
     .card{
-      max-width:900px;
-      margin:auto;
-      border:2px solid #243044;
-      border-radius:18px;
-      padding:20px;
-      background:#0b1220;
-      box-shadow:0 20px 40px rgba(0,0,0,.45);
+      border:2px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(11,18,32,.95), rgba(11,18,32,.9));
+      box-shadow: 0 20px 40px var(--shadow);
+      position: relative;
+      overflow: hidden;
+
+      /* animate */
+      animation: glow 3s infinite ease-in-out;
     }
-    h1{
-      font-family:'Press Start 2P', monospace;
-      font-size:18px;
-      margin-bottom:10px;
-      color:#4aa3ff;
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(700px 300px at 50% 0%, rgba(46,168,255,.18), transparent 70%);
+      pointer-events:none;
     }
-    pre{
-      background:#070d17;
-      border:1px solid #1e2a3d;
-      border-radius:12px;
-      padding:14px;
-      font-size:13px;
-      overflow:auto;
+
+    /* header */
+    .title{
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: 2px;
+      color: var(--blue);
+      text-transform: uppercase;
+      margin: 0 0 16px 0;
+
+      animation: flicker 2.4s infinite;
+      text-shadow: 0 0 14px rgba(46,168,255,.25);
+    }
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px 12px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
     }
     .tag{
-      display:inline-block;
-      border:1px solid #243044;
-      border-radius:999px;
-      padding:6px 10px;
-      margin:6px 6px 0 0;
-      font-size:12px;
-      color:#cfe1ff;
+      border: 2px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--text);
+      background: rgba(7,10,15,.35);
+      box-shadow: inset 0 0 0 1px rgba(46,168,255,.08);
+    }
+    .tag b{
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel{
+      border:2px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      background: rgba(7,10,15,.28);
+    }
+
+    .panel h2{
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* stats */
+    .stats{
+      display:grid;
+      gap: 10px;
+    }
+    .stat-row{
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap: 10px;
+      align-items:center;
+    }
+    .stat-name{
+      font-size: 12px;
+      color: var(--text);
+      opacity: .95;
+      text-transform: uppercase;
+    }
+    .bar{
+      height: 16px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      background: rgba(255,255,255,.05);
+      position: relative;
+    }
+    .fill{
+      height: 100%;
+      width: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(255,255,255,.92) 0 10px,
+          rgba(255,255,255,.70) 10px 14px
+        );
+      box-shadow: 0 0 10px rgba(255,255,255,.12);
+
+      /* animate width */
+      animation: loadBar 1.6s ease forwards;
+    }
+
+    /* bullets */
+    ul{
+      margin: 0;
+      padding-left: 18px;
+      list-style: square;
+    }
+    li{
+      margin: 8px 0;
+      font-size: 12px;
+      color: var(--text);
+      opacity: .95;
+      line-height: 1.7;
+    }
+
+    .mono{
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--text);
+      opacity: .95;
+    }
+    .muted{ color: var(--muted); opacity: .9; }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    /* inventory */
+    .inv{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px 14px;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .inv span{
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: rgba(7,10,15,.25);
+    }
+
+    /* === ANIMATIONS === */
+    @keyframes glow {
+      0%   { box-shadow: 0 20px 40px var(--shadow), 0 0 12px rgba(46,168,255,.18); }
+      50%  { box-shadow: 0 20px 40px var(--shadow), 0 0 28px rgba(46,168,255,.55); }
+      100% { box-shadow: 0 20px 40px var(--shadow), 0 0 12px rgba(46,168,255,.18); }
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      46% { opacity: .92; }
+      50% { opacity: .82; }
+      54% { opacity: .95; }
+      58% { opacity: .88; }
+    }
+
+    @keyframes loadBar {
+      from { width: 0; }
+      to   { width: var(--level); }
+    }
+
+    /* responsive */
+    @media (min-width: 860px){
+      .grid{ grid-template-columns: 1.05fr .95fr; }
+      .split{ grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 
 <body>
-  <div class="card">
-    <h1>PLAYER DATA LOADED: YAZEED</h1>
+  <div class="wrap">
+    <div class="card">
 
-    <div class="tag">Class: Quiet Strategist</div>
-    <div class="tag">Level: 21</div>
-    <div class="tag">Born: Dec 21</div>
-    <div class="tag">Faction: Alenezi (501)</div>
+      <h1 id="title" class="title">PLAYER DATA LOADING...</h1>
 
-<pre>
-STATS
-PATIENCE        █████████▓
-LOYALTY         ██████████
-AWARENESS       █████████▓
-HONESTY         ██████████
-CHAOS (CONTROL) ███████▓▓▓
+      <div class="tags">
+        <div class="tag"><b>Class:</b> Quiet Strategist</div>
+        <div class="tag"><b>Level:</b> 21</div>
+        <div class="tag"><b>Born:</b> Dec 21</div>
+        <div class="tag"><b>Faction:</b> Alenezi (501)</div>
+      </div>
 
-PASSIVE TRAITS
-• Reads emotions without dialogue
-• Withdraws to reset, not to disappear
-• Notices what others miss
+      <div class="grid">
+        <!-- LEFT -->
+        <div class="panel">
+          <h2>Stats</h2>
+          <div class="stats">
+            <div class="stat-row">
+              <div class="stat-name">Patience</div>
+              <div class="bar"><div class="fill" style="--level:85%"></div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-name">Loyalty</div>
+              <div class="bar"><div class="fill" style="--level:95%"></div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-name">Awareness</div>
+              <div class="bar"><div class="fill" style="--level:88%"></div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-name">Honesty</div>
+              <div class="bar"><div class="fill" style="--level:92%"></div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-name">Chaos (Control)</div>
+              <div class="bar"><div class="fill" style="--level:70%"></div></div>
+            </div>
+          </div>
 
-SECRET TRAIT
-• Understands you even when you don’t explain
+          <div style="height:14px"></div>
 
-INVENTORY
-☕ Coffee   🍵 Tea   ⚡ White Red Bull
-🔥 Fire     🌧️ Rain  🐈 Cats
+          <h2>Passive Traits</h2>
+          <ul>
+            <li>Reads emotions without dialogue</li>
+            <li>Withdraws to reset, not to disappear</li>
+            <li>Notices what others miss</li>
+          </ul>
 
-VEHICLE HISTORY
-PAST: Toyota Land Cruiser
-NOW : Chevrolet Caprice
+          <div style="height:14px"></div>
 
-NATURE MODE
-• Desert
-• Fire
-• Silence
-• Reset
+          <h2>Secret Trait</h2>
+          <ul>
+            <li>Understands you even when you don’t explain</li>
+          </ul>
+        </div>
 
-MORAL SYSTEM
-FORGIVES: YES
-FORGETS : NO
+        <!-- RIGHT -->
+        <div class="panel">
+          <h2>Inventory</h2>
+          <div class="inv">
+            <span>☕ Coffee</span>
+            <span>🍵 Tea</span>
+            <span>⚡ White Red Bull</span>
+            <span>🔥 Fire</span>
+            <span>🌧️ Rain</span>
+            <span>🐈 Cats</span>
+          </div>
 
-LORE
-If he stays quiet, it means it matters.
-If he stays, it means it’s real.
-</pre>
+          <div style="height:16px"></div>
 
+          <div class="split">
+            <div class="panel" style="padding:14px">
+              <h2>Vehicle History</h2>
+              <div class="mono">
+                <div><span class="muted">PAST:</span> Toyota Land Cruiser</div>
+                <div><span class="muted">NOW :</span> Chevrolet Caprice</div>
+              </div>
+            </div>
+
+            <div class="panel" style="padding:14px">
+              <h2>Nature Mode</h2>
+              <ul>
+                <li>Desert</li>
+                <li>Fire</li>
+                <li>Silence</li>
+                <li>Reset</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="height:16px"></div>
+
+          <div class="panel" style="padding:14px">
+            <h2>Moral System</h2>
+            <div class="mono">
+              <div><span class="muted">FORGIVES:</span> YES</div>
+              <div><span class="muted">FORGETS :</span> NO</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
+
+  <script>
+    // Title loading -> loaded
+    setTimeout(() => {
+      const el = document.getElementById("title");
+      if (el) el.textContent = "PLAYER DATA LOADED: YAZEED";
+    }, 1400);
+  </script>
 </body>
 </html>
