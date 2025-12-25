@@ -17,11 +17,12 @@
       --text:#eaf2ff;
       --muted:#a9c0df;
       --blue:#2ea8ff;
-      --blue2:#1e90ff;
       --shadow: rgba(0,0,0,.45);
+      --pink: rgba(255, 80, 170, .85);
+      --aqua: rgba(80, 255, 220, .85);
     }
 
-    *{ box-sizing: border-box; }
+    *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body{
       margin:0;
       background: radial-gradient(1200px 600px at 50% -10%, rgba(46,168,255,.18), transparent 60%),
@@ -43,8 +44,8 @@
       position: relative;
       overflow: hidden;
       animation: glow 3s infinite ease-in-out;
+      user-select:none;
     }
-
     .card::before{
       content:"";
       position:absolute;
@@ -53,7 +54,6 @@
       pointer-events:none;
     }
 
-    /* header */
     .title{
       font-size: 26px;
       line-height: 1.25;
@@ -65,9 +65,9 @@
       text-shadow: 0 0 14px rgba(46,168,255,.25);
       position: relative;
       z-index: 1;
+      display:inline-block;
+      cursor: pointer;
     }
-
-    /* glitch layers (enabled via .glitch class) */
     .title.glitch::before,
     .title.glitch::after{
       content: attr(data-text);
@@ -76,30 +76,28 @@
       top: 0;
       width: 100%;
       overflow: hidden;
-      opacity: .8;
+      opacity: .85;
       pointer-events: none;
     }
     .title.glitch::before{
       transform: translate(2px,0);
-      color: rgba(255, 80, 170, .85);
+      color: var(--pink);
       animation: glitchA .55s steps(2,end) 2;
       clip-path: inset(0 0 55% 0);
     }
     .title.glitch::after{
       transform: translate(-2px,0);
-      color: rgba(80, 255, 220, .85);
+      color: var(--aqua);
       animation: glitchB .55s steps(2,end) 2;
       clip-path: inset(45% 0 0 0);
     }
 
-    /* tiny hint for sound */
     .hint{
       font-size: 10px;
       color: rgba(169,192,223,.85);
       margin-bottom: 14px;
       position: relative;
       z-index: 1;
-      user-select: none;
     }
     .hint b{ color: rgba(234,242,255,.95); font-weight: 400; }
 
@@ -120,10 +118,7 @@
       background: rgba(7,10,15,.35);
       box-shadow: inset 0 0 0 1px rgba(46,168,255,.08);
     }
-    .tag b{
-      color: var(--muted);
-      font-weight: 400;
-    }
+    .tag b{ color: var(--muted); font-weight: 400; }
 
     .grid{
       display:grid;
@@ -138,6 +133,19 @@
       border-radius: 14px;
       padding: 16px;
       background: rgba(7,10,15,.28);
+      position: relative;
+      transform: translateZ(0);
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      cursor: pointer;
+    }
+
+    /* Tap feedback (we add .pressed via JS) */
+    .panel.pressed,
+    .tag.pressed,
+    .inv span.pressed{
+      transform: scale(.985) translateY(1px);
+      border-color: rgba(46,168,255,.55);
+      box-shadow: 0 0 0 3px rgba(46,168,255,.18);
     }
 
     .panel h2{
@@ -146,13 +154,11 @@
       color: var(--muted);
       letter-spacing: 1px;
       text-transform: uppercase;
+      cursor: default;
     }
 
     /* stats */
-    .stats{
-      display:grid;
-      gap: 10px;
-    }
+    .stats{ display:grid; gap: 10px; cursor: default; }
     .stat-row{
       display:grid;
       grid-template-columns: 220px 1fr;
@@ -186,33 +192,13 @@
       animation: loadBar 1.6s ease forwards;
     }
 
-    /* bullets */
-    ul{
-      margin: 0;
-      padding-left: 18px;
-      list-style: square;
-    }
-    li{
-      margin: 8px 0;
-      font-size: 12px;
-      color: var(--text);
-      opacity: .95;
-      line-height: 1.7;
-    }
+    ul{ margin: 0; padding-left: 18px; list-style: square; cursor: default; }
+    li{ margin: 8px 0; font-size: 12px; color: var(--text); opacity: .95; line-height: 1.7; }
 
-    .mono{
-      font-size: 12px;
-      line-height: 1.8;
-      color: var(--text);
-      opacity: .95;
-    }
+    .mono{ font-size: 12px; line-height: 1.8; color: var(--text); opacity: .95; cursor: default; }
     .muted{ color: var(--muted); opacity: .9; }
 
-    .split{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
+    .split{ display:grid; grid-template-columns: 1fr; gap: 16px; }
 
     /* inventory */
     .inv{
@@ -221,20 +207,18 @@
       gap: 10px 14px;
       font-size: 12px;
       line-height: 1.7;
+      cursor: default;
     }
     .inv span{
       border: 2px solid var(--border);
       border-radius: 10px;
       padding: 8px 10px;
       background: rgba(7,10,15,.25);
-      transition: transform .12s ease, box-shadow .12s ease;
-    }
-    .inv span:active{
-      transform: translateY(1px) scale(.99);
-      box-shadow: 0 0 0 2px rgba(46,168,255,.18);
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      cursor: pointer;
     }
 
-    /* SECRET unlock panel */
+    /* secret box */
     .secret{
       display:none;
       margin-top: 14px;
@@ -243,9 +227,8 @@
       padding: 14px;
       background: rgba(46,168,255,.08);
       animation: popIn .35s ease forwards;
+      cursor: default;
     }
-    .secret h2{ margin: 0 0 10px 0; }
-    .secret .mono{ opacity: .95; }
     .pill{
       display:inline-block;
       padding: 8px 10px;
@@ -257,13 +240,36 @@
       color: rgba(234,242,255,.95);
     }
 
-    /* === ANIMATIONS === */
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border: 2px solid rgba(46,168,255,.55);
+      border-radius: 12px;
+      background: rgba(11,18,32,.92);
+      box-shadow: 0 12px 30px rgba(0,0,0,.45);
+      color: rgba(234,242,255,.95);
+      font-size: 10px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 999;
+      transition: opacity .18s ease, transform .18s ease;
+      white-space: nowrap;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+
+    /* === animations === */
     @keyframes glow {
       0%   { box-shadow: 0 20px 40px var(--shadow), 0 0 12px rgba(46,168,255,.18); }
       50%  { box-shadow: 0 20px 40px var(--shadow), 0 0 28px rgba(46,168,255,.55); }
       100% { box-shadow: 0 20px 40px var(--shadow), 0 0 12px rgba(46,168,255,.18); }
     }
-
     @keyframes flicker {
       0%, 100% { opacity: 1; }
       46% { opacity: .92; }
@@ -271,29 +277,11 @@
       54% { opacity: .95; }
       58% { opacity: .88; }
     }
+    @keyframes loadBar { from { width: 0; } to { width: var(--level); } }
+    @keyframes popIn{ from { transform: translateY(6px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes glitchA{ 0% { transform: translate(2px,0); } 50%{ transform: translate(4px,-1px); } 100%{ transform: translate(1px,1px); } }
+    @keyframes glitchB{ 0% { transform: translate(-2px,0); } 50%{ transform: translate(-4px,1px); } 100%{ transform: translate(-1px,-1px); } }
 
-    @keyframes loadBar {
-      from { width: 0; }
-      to   { width: var(--level); }
-    }
-
-    @keyframes popIn{
-      from { transform: translateY(6px); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes glitchA{
-      0% { transform: translate(2px,0); }
-      50%{ transform: translate(4px,-1px); }
-      100%{ transform: translate(1px,1px); }
-    }
-    @keyframes glitchB{
-      0% { transform: translate(-2px,0); }
-      50%{ transform: translate(-4px,1px); }
-      100%{ transform: translate(-1px,-1px); }
-    }
-
-    /* responsive */
     @media (min-width: 860px){
       .grid{ grid-template-columns: 1.05fr .95fr; }
       .split{ grid-template-columns: 1fr 1fr; }
@@ -303,10 +291,10 @@
 
 <body>
   <div class="wrap">
-    <div class="card">
+    <div class="card" id="card">
 
       <h1 id="title" class="title" data-text="PLAYER DATA LOADING...">PLAYER DATA LOADING...</h1>
-      <div class="hint">🔊 Sound FX: <b>Tap anywhere once</b> to enable.</div>
+      <div class="hint" id="hint">🔊 Sound FX: <b>Tap anywhere once</b> to enable.</div>
 
       <div class="tags">
         <div class="tag"><b>Class:</b> Quiet Strategist</div>
@@ -317,7 +305,7 @@
 
       <div class="grid">
         <!-- LEFT -->
-        <div class="panel">
+        <div class="panel" data-panel="stats">
           <h2>Stats</h2>
           <div class="stats">
             <div class="stat-row">
@@ -353,40 +341,38 @@
 
           <div style="height:14px"></div>
 
-          <h2>Secret Trait</h2>
+          <h2 id="secretToggle">Secret Trait (tap to toggle)</h2>
           <ul>
             <li>Understands you even when you don’t explain</li>
           </ul>
 
-          <!-- SECRET UNLOCK (hidden first) -->
           <div id="secretBox" class="secret">
             <h2>Secret Unlock</h2>
             <div class="mono">
               <div><span class="muted">CODE NAME:</span> “No-words needed”</div>
               <div><span class="muted">TRIGGER:</span> Silence + Rain + Coffee</div>
               <div><span class="muted">EFFECT:</span> Calms down, thinks deeper, comes back sharper</div>
-              <div class="pill">👀 unlocked after 3s</div>
+              <div class="pill">👀 tap “Secret Trait” to hide/show</div>
             </div>
           </div>
-
         </div>
 
         <!-- RIGHT -->
-        <div class="panel">
-          <h2>Inventory</h2>
-          <div class="inv">
-            <span>☕ Coffee</span>
-            <span>🍵 Tea</span>
-            <span>⚡ White Red Bull</span>
-            <span>🔥 Fire</span>
-            <span>🌧️ Rain</span>
-            <span>🐈 Cats</span>
+        <div class="panel" data-panel="right">
+          <h2>Inventory (tap items)</h2>
+          <div class="inv" id="inv">
+            <span data-item="Coffee">☕ Coffee</span>
+            <span data-item="Tea">🍵 Tea</span>
+            <span data-item="White Red Bull">⚡ White Red Bull</span>
+            <span data-item="Fire">🔥 Fire</span>
+            <span data-item="Rain">🌧️ Rain</span>
+            <span data-item="Cats">🐈 Cats</span>
           </div>
 
           <div style="height:16px"></div>
 
           <div class="split">
-            <div class="panel" style="padding:14px">
+            <div class="panel" data-panel="vehicle" style="padding:14px">
               <h2>Vehicle History</h2>
               <div class="mono">
                 <div><span class="muted">PAST:</span> Toyota Land Cruiser</div>
@@ -394,7 +380,7 @@
               </div>
             </div>
 
-            <div class="panel" style="padding:14px">
+            <div class="panel" data-panel="nature" style="padding:14px">
               <h2>Nature Mode</h2>
               <ul>
                 <li>Desert</li>
@@ -407,7 +393,7 @@
 
           <div style="height:16px"></div>
 
-          <div class="panel" style="padding:14px">
+          <div class="panel" data-panel="moral" style="padding:14px">
             <h2>Moral System</h2>
             <div class="mono">
               <div><span class="muted">FORGIVES:</span> YES</div>
@@ -420,30 +406,24 @@
     </div>
   </div>
 
+  <div id="toast" class="toast">+1</div>
+
   <script>
-    // ---- Retro "click" sound (iOS-safe: plays after first user tap) ----
+    // ---------- Sound (iOS: needs user gesture) ----------
     let audioUnlocked = false;
+    const hint = document.getElementById("hint");
 
     function makeClickSound(){
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const o = ctx.createOscillator();
       const g = ctx.createGain();
-
       o.type = "square";
       o.frequency.setValueAtTime(880, ctx.currentTime);
       g.gain.setValueAtTime(0.0001, ctx.currentTime);
-
-      o.connect(g);
-      g.connect(ctx.destination);
-
-      // quick "tick"
+      o.connect(g); g.connect(ctx.destination);
       g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
-
-      o.start();
-      o.stop(ctx.currentTime + 0.09);
-
-      // close context shortly after
+      o.start(); o.stop(ctx.currentTime + 0.09);
       setTimeout(() => ctx.close(), 150);
     }
 
@@ -451,40 +431,102 @@
       if (audioUnlocked) return;
       audioUnlocked = true;
       makeClickSound();
-      // optional: remove hint after unlock
-      const hint = document.querySelector(".hint");
       if (hint) hint.textContent = "🔊 Sound FX: enabled.";
       window.removeEventListener("pointerdown", unlockAudioOnce);
       window.removeEventListener("touchstart", unlockAudioOnce);
     }
 
-    window.addEventListener("pointerdown", unlockAudioOnce, { once: false });
-    window.addEventListener("touchstart", unlockAudioOnce, { once: false });
+    window.addEventListener("pointerdown", unlockAudioOnce, { passive: true });
+    window.addEventListener("touchstart", unlockAudioOnce, { passive: true });
 
-    // ---- Title loading -> loaded + glitch punch ----
+    function clickFx(){
+      if (navigator.vibrate) navigator.vibrate(15);
+      if (audioUnlocked) makeClickSound();
+    }
+
+    // ---------- Toast ----------
+    const toast = document.getElementById("toast");
+    let toastTimer = null;
+
+    function showToast(text){
+      if (!toast) return;
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 900);
+    }
+
+    // ---------- Press effect ----------
+    function press(el){
+      if (!el) return;
+      el.classList.add("pressed");
+      setTimeout(() => el.classList.remove("pressed"), 140);
+    }
+
+    // ---------- Title loading -> loaded + glitch ----------
     const title = document.getElementById("title");
+    function glitchTitle(){
+      if (!title) return;
+      title.classList.add("glitch");
+      setTimeout(() => title.classList.remove("glitch"), 650);
+    }
 
     setTimeout(() => {
       if (!title) return;
       title.textContent = "PLAYER DATA LOADED: YAZEED";
       title.setAttribute("data-text", title.textContent);
+      glitchTitle();
+    }, 900);
 
-      // glitch for a moment
-      title.classList.add("glitch");
-      setTimeout(() => title.classList.remove("glitch"), 800);
+    // Tap title = glitch + feedback + toast
+    title?.addEventListener("click", () => {
+      clickFx();
+      glitchTitle();
+      showToast("⚡ GLITCH PULSE");
+      press(title);
+    });
 
-      // small click if already unlocked
-      if (audioUnlocked) makeClickSound();
-    }, 1400);
+    // ---------- Secret toggle ----------
+    const secretToggle = document.getElementById("secretToggle");
+    const secretBox = document.getElementById("secretBox");
 
-    // ---- Secret unlock after 3 seconds ----
+    // still auto-unlock after 3s (but now you can toggle)
     setTimeout(() => {
-      const box = document.getElementById("secretBox");
-      if (box){
-        box.style.display = "block";
-        if (audioUnlocked) makeClickSound();
+      if (secretBox && secretBox.style.display !== "block") {
+        secretBox.style.display = "block";
       }
     }, 3000);
+
+    function toggleSecret(){
+      if (!secretBox) return;
+      const isOpen = secretBox.style.display === "block";
+      secretBox.style.display = isOpen ? "none" : "block";
+      clickFx();
+      showToast(isOpen ? "🔒 SECRET HIDDEN" : "👀 SECRET UNLOCKED");
+    }
+
+    secretToggle?.addEventListener("click", toggleSecret);
+
+    // ---------- Panels tap feedback ----------
+    document.querySelectorAll(".panel, .tag").forEach(el => {
+      el.addEventListener("click", (e) => {
+        // avoid double-trigger on inventory item (handled below)
+        if (e.target && e.target.matches(".inv span")) return;
+        press(el);
+        clickFx();
+      });
+    });
+
+    // ---------- Inventory item taps ----------
+    const inv = document.getElementById("inv");
+    inv?.addEventListener("click", (e) => {
+      const item = e.target?.closest("span[data-item]");
+      if (!item) return;
+      const name = item.getAttribute("data-item");
+      press(item);
+      clickFx();
+      showToast(`+1 ${name}`);
+    });
   </script>
 </body>
 </html>
